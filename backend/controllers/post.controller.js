@@ -227,31 +227,20 @@ export const getFollowingPosts = async (req, res) => {
     }
 };
 
-export const getUserPosts = async (req, res) => {
+export const getUserPosts = async (req,res) => {
     try {
-        const { username } = req.params;
-
-        // Check if username is provided
-        if (!username) {
-            return res.status(400).json({ error: "Username is required" });
-        }
-
-        // Find the user by username
-        const user = await User.findOne({ username }).lean();
+        const {username} = req.params
+        const user = await User.findOne({username})
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            
         }
-
-        // Fetch and sort the user's posts, populating related fields
-        const posts = await Post.find({ user: user._id })
-            .sort({ createdAt: -1 })
-            .populate({ path: 'user', select: '-password' }) // Exclude password
-            .populate({ path: 'comments.user', select: '-password' }) // Exclude password from comment authors
-            .lean(); // Return plain JavaScript objects for performance
+        const posts = await Post.find({user:user._id}) .sort({ createdAt: -1 })
+        .populate({ path: 'user', select: '-password' }) // Hide sensitive info
+        .populate({ path: 'comments.user', select: '-password' }) // Populate comment authors
+        .lean(); // Optimize performance by returning plain JS objects
 
         return res.status(200).json(posts);
     } catch (error) {
-        console.error("Error fetching user posts:", error); // Log error for debugging
-        return res.status(500).json({ error: "An error occurred while fetching posts" });
+        
     }
-};
+}
