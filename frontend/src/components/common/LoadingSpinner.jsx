@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 const LoadingSpinner = ({ size = "md" }) => {
 	const sizeClass = `loading-${size}`;
 
